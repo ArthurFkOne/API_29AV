@@ -7,23 +7,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Majo29AV.Services.Services
 {
-    public class UsuarioServices : IUsuarioServices
+    public class RolServices : IRolServices
     {
         private readonly ApplicationDbContext _context;
-        public UsuarioServices(ApplicationDbContext context)
+        public RolServices(ApplicationDbContext context)
         {
             _context = context;
         }
 
         //Lista de usuarios
-        public async Task<Response<List<Usuario>>> GetAll()
+        public async Task<Response<List<Rol>>> GetAll()
         {
             try
             {
 
-                List<Usuario> response = await _context.Usuarios.Include(x=>x.Roles).ToListAsync();
+                List<Rol> response = await _context.Roles.ToListAsync();
 
-                return new Response<List<Usuario>>(response, "Lista de Usuarios");
+                return new Response<List<Rol>>(response, "Lista de Roles");
 
             }
             catch (Exception ex)
@@ -33,37 +33,35 @@ namespace Majo29AV.Services.Services
             }
         }
 
-        public async Task<Response<Usuario>> GetbyId(int id)
+        public async Task<Response<Rol>> GetbyId(int id)
         {
             try
             {
-                Usuario usuario = await _context.Usuarios.FirstOrDefaultAsync(x => x.PkUsuario == id);
+                Rol rol = await _context.Roles.FirstOrDefaultAsync(x => x.PkRol == id);
 
-                return new Response<Usuario>(usuario, "Usuario encontrado");
+                return new Response<Rol>(rol, "Rol encontrado");
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("Ocurrio un error " + ex.Message);
             }
         }
 
-        public async Task<Response<Usuario>> Create(UsuarioRequest request)
+        public async Task<Response<Rol>> Create(RolRequest request)
         {
             try
             {
-                Usuario usuario1 = new Usuario()
+                Rol Rol1 = new Rol()
                 {
                     Nombre = request.Nombre,
-                    Password = request.Password,
-                    UserName = request.UserName,
-                    FkRol = request.FkRol,
+                    
                 };
 
-                _context.Usuarios.Add(usuario1);
+                _context.Roles.Add(Rol1);
                 await _context.SaveChangesAsync();
 
-                return new Response<Usuario>(usuario1, "Usuario Creado exitosamente");
+                return new Response<Rol>(Rol1, "Rol Creado exitosamente");
 
             }
             catch (Exception ex)
@@ -72,18 +70,18 @@ namespace Majo29AV.Services.Services
             }
 
         }
-        public async Task<Response<Usuario>> Delete(int id)
+        public async Task<Response<Rol>> Delete(int id)
         {
             try
             {
                 try
                 {
-                    Usuario usuario3 = await _context.Usuarios.FirstOrDefaultAsync(x => x.PkUsuario == id);
+                    Rol Rol3 = await _context.Roles.FirstOrDefaultAsync(x => x.PkRol == id);
 
-                    _context.Usuarios.Remove(usuario3);
+                    _context.Roles.Remove(Rol3);
                     await _context.SaveChangesAsync();
 
-                    return new Response<Usuario>(usuario3, "Usuario eliminado");
+                    return new Response<Rol>(Rol3, "Rol eliminado");
 
                 }
                 catch (Exception ex)
@@ -98,23 +96,21 @@ namespace Majo29AV.Services.Services
             }
 
         }
-        public async Task<Response<Usuario>> Update(UsuarioRequest user, int id)
+        public async Task<Response<Rol>> Update(RolRequest rol, int id)
         {
             try
             {
                 try
                 {
-                    Usuario usuario2 = await _context.Usuarios.FirstOrDefaultAsync(x => x.PkUsuario == id);
+                    Rol rol2 = await _context.Roles.FirstOrDefaultAsync(x => x.PkRol == id);
 
 
-                    usuario2.Nombre = user.Nombre;
-                    usuario2.Password = user.Password;
-                    usuario2.UserName = user.UserName;
-                    usuario2.FkRol = user.FkRol;
+                    rol2.Nombre = rol.Nombre;
                     
+
                     await _context.SaveChangesAsync();
 
-                    return new Response<Usuario>(usuario2, "Usuario Actualizado");
+                    return new Response<Rol>(rol2, "Rol Actualizado");
 
                 }
                 catch (Exception ex)

@@ -17,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 
 builder.Services.AddTransient<IUsuarioServices,UsuarioServices>();
+builder.Services.AddTransient<IRolServices,RolServices>();
 
 
 
