@@ -37,7 +37,7 @@ namespace Majo29AV.Services.Services
         {
             try
             {
-                Usuario usuario = await _context.Usuarios.FirstOrDefaultAsync(x => x.PkUsuario == id);
+                Usuario usuario = await _context.Usuarios.Include(x => x.Roles).FirstOrDefaultAsync(x => x.PkUsuario == id);
 
                 return new Response<Usuario>(usuario, "Usuario encontrado");
 
@@ -129,5 +129,23 @@ namespace Majo29AV.Services.Services
             }
 
         }
+
+        public UsuarioRequest? ValidarUsuario(UsuarioRequest request)
+        {
+            var usuario = _context.Usuarios
+                .FirstOrDefault(u => u.UserName == request.UserName && u.Password == request.Password);
+
+            if (usuario == null)
+                return null;
+
+            return new UsuarioRequest
+            {
+                Nombre = usuario.Nombre,
+                UserName = usuario.UserName,
+                Password = usuario.Password,
+                FkRol = usuario.FkRol
+            };
+        }
+
     }
 }

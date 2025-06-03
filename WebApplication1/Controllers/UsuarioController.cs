@@ -1,6 +1,7 @@
 ﻿using Domain.DTO;
 using Domain.Entities;
 using Majo29AV.Services.Iservices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +34,7 @@ namespace Majo29AV.Controllers
             return Ok(response);
 
         }
-        
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(UsuarioRequest request)
         {
@@ -41,7 +42,7 @@ namespace Majo29AV.Controllers
 
             return Ok(response);
         }
-
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
@@ -49,7 +50,7 @@ namespace Majo29AV.Controllers
 
             return Ok(response);
         }
-
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Update(UsuarioRequest request, int id)
         {
@@ -57,6 +58,7 @@ namespace Majo29AV.Controllers
 
             return Ok(response);
         }
+
 
 
 
