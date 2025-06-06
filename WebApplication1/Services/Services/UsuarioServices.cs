@@ -130,7 +130,7 @@ namespace Majo29AV.Services.Services
 
         }
 
-        public UsuarioRequest? ValidarUsuario(UsuarioRequest request)
+        public LoginRequest ValidarUsuario(LoginRequest request)
         {
             var usuario = _context.Usuarios
                 .FirstOrDefault(u => u.UserName == request.UserName && u.Password == request.Password);
@@ -138,12 +138,11 @@ namespace Majo29AV.Services.Services
             if (usuario == null)
                 return null;
 
-            return new UsuarioRequest
+            return new LoginRequest
             {
-                Nombre = usuario.Nombre,
                 UserName = usuario.UserName,
                 Password = usuario.Password,
-                FkRol = usuario.FkRol
+                
             };
         }
 

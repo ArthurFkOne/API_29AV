@@ -21,37 +21,43 @@ namespace Majo29AV.Controllers
             _config = config;
         }
 
+
         [HttpPost("login")]
-        public IActionResult Login([FromBody] UsuarioRequest request)
+        public IActionResult Login([FromBody] LoginRequest request)
         {
-            // Validar usuario desde el servicio
-            var usuarioValido = _usuarioService.ValidarUsuario(request);
-
-            if (usuarioValido == null)
-                return Unauthorized("Credenciales inválidas");
-
-            // Crear claims
-            var claims = new[]
+            try
             {
-                new Claim(ClaimTypes.Name, request.UserName),
-                new Claim("Rol", request.FkRol?.ToString() ?? "")
-            };
+                var usuarioValido = _usuarioService.ValidarUsuario(request);
 
-            // Obtener valores desde configuración
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                if (usuarioValido == null)
+                    return Unauthorized("Credenciales inválidas");
 
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddHours(2),
-                signingCredentials: creds);
+                var claims = new[]
+                {
+            new Claim(ClaimTypes.Name, request.UserName)
+        };
 
-            return Ok(new
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
+                    claims: claims,
+                    expires: DateTime.Now.AddHours(2),
+                    signingCredentials: creds);
+
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token)
+                });
+            }
+            catch (Exception ex)
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
-            });
+                return BadRequest($"Error: {ex.Message}");
+            }
         }
+
     }
 }
+
